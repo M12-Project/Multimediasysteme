@@ -1,0 +1,70 @@
+/* Reset */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+}
+
+/* App-Wrapper */
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;      /* untereinander */
+  align-items: center;         /* horizontal zentriert */
+  justify-content: flex-start; /* oben anfangen */
+  gap: 20px;
+  padding: 20px;
+}
+
+h1 {
+  margin: 0;
+}
+
+/* Museum Grid */
+#museum {
+  display: grid;
+  grid-template-columns: repeat(12, 30px);
+  grid-template-rows: repeat(11, 30px);
+
+  gap: 0;
+  padding: 0;
+  background: none;
+  image-rendering: pixelated;
+}
+
+/* Begehbar */
+.cell {
+  width: 30px;
+  height: 30px;
+  background: white;
+  position: relative;
+}
+
+/* Mauer */
+.wall {
+  background: black;
+}
+
+/* Spieler */
+.player {
+  width: 14px;
+  height: 14px;
+  background: red;
+  border-radius: 50%;
+  position: absolute;
+  top: 8px;
+  left: 8px;
+}
+
+/* Info */
+.info {
+  background: white;
+  padding: 10px 15px;
+  border-radius: 6px;
+  min-width: 200px;
+  text-align: center;
+}
