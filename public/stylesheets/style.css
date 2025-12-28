@@ -13,9 +13,9 @@ body {
 .app {
   min-height: 100vh;
   display: flex;
-  flex-direction: column;      /* untereinander */
-  align-items: center;         /* horizontal zentriert */
-  justify-content: flex-start; /* oben anfangen */
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
   gap: 20px;
   padding: 20px;
 }
@@ -27,26 +27,23 @@ h1 {
 /* Museum Grid */
 #museum {
   display: grid;
-  grid-template-columns: repeat(12, 30px);
-  grid-template-rows: repeat(11, 30px);
-
   gap: 0;
   padding: 0;
   background: none;
-  image-rendering: pixelated;
+  position: relative; /* wichtig für Player */
 }
 
-/* Begehbar */
+/* Räume */
 .cell {
-  width: 30px;
-  height: 30px;
   background: white;
   position: relative;
 }
 
-/* Mauer */
+/* Wände */
 .wall {
   background: black;
+  width: 100%;
+  height: 100%;
 }
 
 /* Spieler */
@@ -56,15 +53,15 @@ h1 {
   background: red;
   border-radius: 50%;
   position: absolute;
-  top: 8px;
-  left: 8px;
+  z-index: 10;
 }
 
 /* Info */
-.info {
+#roomInfo {
   background: white;
   padding: 10px 15px;
   border-radius: 6px;
   min-width: 200px;
   text-align: center;
+  font-weight: bold;
 }
