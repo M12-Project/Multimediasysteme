@@ -25,7 +25,7 @@ const map = [
 let player = { x: 5, y: 5 };
 
 const WALL_SIZE = 30;   // Wandbreite
-const ROOM_SIZE = 10;  // Raumgröße (hier kannst du die Map größer machen!)
+const ROOM_SIZE = 10;   // Raumgröße
 
 /* -------------------------
    RÄUME DEFINIEREN
@@ -116,9 +116,9 @@ function generateGridTemplate() {
 generateGridTemplate();
 
 /* -------------------------
-   PIXELPOSITION BERECHNEN
+   ZELL-MITTELPUNKT BERECHNEN
 -------------------------- */
-function getCellPixelPosition(x, y) {
+function getCellPixelCenter(x, y) {
   const colSizes = museum.style.gridTemplateColumns.split(" ");
   const rowSizes = museum.style.gridTemplateRows.split(" ");
 
@@ -128,7 +128,13 @@ function getCellPixelPosition(x, y) {
   let py = 0;
   for (let i = 0; i < y; i++) py += parseInt(rowSizes[i]);
 
-  return { x: px, y: py };
+  const cellWidth = parseInt(colSizes[x]);
+  const cellHeight = parseInt(rowSizes[y]);
+
+  return {
+    x: px + cellWidth / 2 - 7,  // 7 = halbe Spielergröße
+    y: py + cellHeight / 2 - 7
+  };
 }
 
 /* -------------------------
@@ -138,8 +144,8 @@ function movePlayerSmooth(targetX, targetY) {
   const playerEl = document.querySelector(".player");
   if (!playerEl) return;
 
-  const start = getCellPixelPosition(player.x, player.y);
-  const end = getCellPixelPosition(targetX, targetY);
+  const start = getCellPixelCenter(player.x, player.y);
+  const end = getCellPixelCenter(targetX, targetY);
 
   let progress = 0;
   const duration = 400;
@@ -169,7 +175,7 @@ function movePlayerSmooth(targetX, targetY) {
 -------------------------- */
 function positionPlayer() {
   const playerEl = document.querySelector(".player");
-  const pos = getCellPixelPosition(player.x, player.y);
+  const pos = getCellPixelCenter(player.x, player.y);
   playerEl.style.left = pos.x + "px";
   playerEl.style.top = pos.y + "px";
 }

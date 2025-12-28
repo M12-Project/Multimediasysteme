@@ -65,3 +65,33 @@ h1 {
   text-align: center;
   font-weight: bold;
 }
+
+#infoBox {
+  margin-top: 20px;
+  background: white;
+  padding: 10px 15px;
+  border-radius: 6px;
+  min-width: 200px;
+  text-align: center;
+  font-size: 16px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ccc;
+}
+
+/* Der gleiche rote Punkt wie auf der Map */
+#infoBox .playerIcon {
+  width: 14px;
+  height: 14px;
+  background: red;
+  border-radius: 50%;
+}
+
+/* Text daneben schwarz */
+#infoBox .infoText {
+  color: black;
+  font-weight: bold;
+}
+
