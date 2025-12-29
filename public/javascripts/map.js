@@ -33,6 +33,7 @@ const ROOM_SIZE = 10;   // Raumgröße
 const rooms = {
   raum1: {
     name: "Eingangshalle",
+    info: "Willkommen im Museum. Von hier aus erreichen Sie alle Ausstellungen.",
     cells: [
       [1,1],[2,1],[3,1],[4,1],
       [1,2],[2,2],[3,2],[4,2],
@@ -42,6 +43,7 @@ const rooms = {
 
   raum2: {
     name: "Ausstellung A",
+    info: "Moderne Kunst und interaktive Exponate.",
     cells: [
       [8,1],[9,1],[10,1],
       [8,2],[9,2],[10,2],
@@ -51,6 +53,7 @@ const rooms = {
 
   raum3: {
     name: "Werkstatt",
+    info: "Hier entstehen neue Ausstellungsstücke.",
     cells: [
       [1,7],[2,7],[3,7],
       [1,8],[2,8],[3,8],
@@ -60,6 +63,7 @@ const rooms = {
 
   raum4: {
     name: "Archiv",
+    info: "Zugang nur für Mitarbeitende.",
     cells: [
       [7,7],[8,7],[9,7],
       [7,8],[8,8],[9,8],
@@ -204,9 +208,13 @@ function renderMap() {
           const room = getRoomByCell(x, y);
 
           if (room) {
-            roomInfo.innerText = "Raum: " + room.name;
+            roomInfo.innerHTML =
+              "Raum: " + room.name + "<br>" +
+              "Info: " + room.info;
           } else {
-            roomInfo.innerText = "Flur";
+            roomInfo.innerHTML =
+              "Raum: Flur<br>" +
+              "Info: –";
           }
 
           movePlayerSmooth(x, y);

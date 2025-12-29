@@ -95,3 +95,16 @@ h1 {
   font-weight: bold;
 }
 
+/* Info */
+.info {
+  background: white;
+  padding: 12px 16px;
+  border-radius: 6px;
+  min-width: 220px;
+  text-align: center;
+}
+
+/* Versteckt */
+.hidden {
+  display: none;
+}
