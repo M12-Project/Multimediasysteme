@@ -3,23 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <title>Museum Navigator</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
+
   <link rel="stylesheet" href="/stylesheets/style.css">
 </head>
-<body>
+<body class="bg-light">
 
-  <div class="app">
-    <h1>Museum Navigator</h1>
-    <div id="roomInfo">Klicke auf einen Raum…</div>
+<div class="container app-container">
+
+  <!-- Header -->
+  <header class="text-center my-3">
+    <h1 class="app-title">🏛️ Museum Navigator</h1>
+  </header>
+
+  <!-- Map -->
+  <div class="map-wrapper d-flex justify-content-center">
     <div id="museum"></div>
-    <div id="info"></div>
-    
-    <div id="infoBox">
-      <div class="playerIcon"></div>
-      <span class="infoText">me</span>
+  </div>
+
+  <!-- Info -->
+  <div class="info-card mt-3">
+    <div id="roomInfo">
+      <strong>Raum:</strong> –<br>
+      <strong>Info:</strong> –
     </div>
   </div>
 
-  <script src="/javascripts/map.js"></script>
+</div>
+
+<script src="/javascripts/map.js"></script>
 </body>
 </html>
