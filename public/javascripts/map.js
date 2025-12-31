@@ -28,7 +28,7 @@ const WALL_SIZE = 30;
 const ROOM_SIZE = 10;
 
 /* -------------------------
-   RÄUME DEFINIEREN
+   RÄUME
 -------------------------- */
 const rooms = {
   raum1: {
@@ -70,44 +70,41 @@ const rooms = {
 };
 
 /* -------------------------
-   RAUM ERKENNEN
+   HILFSFUNKTIONEN
 -------------------------- */
 function getRoomByCell(x, y) {
   for (const key in rooms) {
-    for (const cell of rooms[key].cells) {
-      if (cell[0] === x && cell[1] === y) {
-        return rooms[key];
-      }
+    for (const c of rooms[key].cells) {
+      if (c[0] === x && c[1] === y) return rooms[key];
     }
   }
   return null;
 }
 
+function getCellPixelCenter(x, y) {
+  const cols = museum.style.gridTemplateColumns.split(" ");
+  const rows = museum.style.gridTemplateRows.split(" ");
+
+  let px = 0, py = 0;
+  for (let i = 0; i < x; i++) px += parseInt(cols[i]);
+  for (let i = 0; i < y; i++) py += parseInt(rows[i]);
+
+  return {
+    x: px + parseInt(cols[x]) / 2,
+    y: py + parseInt(rows[y]) / 2
+  };
+}
+
 /* -------------------------
-   GRID ERZEUGEN
+   GRID
 -------------------------- */
 function generateGridTemplate() {
-  const cols = map[0].length;
-  const rows = map.length;
-
-  const colSizes = [];
-  const rowSizes = [];
-
-  for (let x = 0; x < cols; x++) {
-    let hasWall = false;
-    for (let y = 0; y < rows; y++) {
-      if (map[y][x] === 1) hasWall = true;
-    }
-    colSizes.push(hasWall ? WALL_SIZE + "px" : ROOM_SIZE + "px");
-  }
-
-  for (let y = 0; y < rows; y++) {
-    let hasWall = false;
-    for (let x = 0; x < cols; x++) {
-      if (map[y][x] === 1) hasWall = true;
-    }
-    rowSizes.push(hasWall ? WALL_SIZE + "px" : ROOM_SIZE + "px");
-  }
+  const colSizes = map[0].map((_, x) =>
+    map.some(row => row[x] === 1) ? WALL_SIZE + "px" : ROOM_SIZE + "px"
+  );
+  const rowSizes = map.map(row =>
+    row.includes(1) ? WALL_SIZE + "px" : ROOM_SIZE + "px"
+  );
 
   museum.style.gridTemplateColumns = colSizes.join(" ");
   museum.style.gridTemplateRows = rowSizes.join(" ");
@@ -116,64 +113,35 @@ function generateGridTemplate() {
 generateGridTemplate();
 
 /* -------------------------
-   ZELL MITTELPUNKT
--------------------------- */
-function getCellPixelCenter(x, y) {
-  const colSizes = museum.style.gridTemplateColumns.split(" ");
-  const rowSizes = museum.style.gridTemplateRows.split(" ");
-
-  let px = 0;
-  for (let i = 0; i < x; i++) px += parseInt(colSizes[i]);
-
-  let py = 0;
-  for (let i = 0; i < y; i++) py += parseInt(rowSizes[i]);
-
-  const cellWidth = parseInt(colSizes[x]);
-  const cellHeight = parseInt(rowSizes[y]);
-
-  return {
-    x: px + cellWidth / 2 - 7,
-    y: py + cellHeight / 2 - 7
-  };
-}
-
-/* -------------------------
    PATHFINDING (BFS)
 -------------------------- */
-function findPath(startX, startY, targetX, targetY) {
-  const queue = [[startX, startY]];
-  const visited = new Set([`${startX},${startY}`]);
-  const parent = {};
+function findPath(sx, sy, tx, ty) {
+  const q = [[sx, sy]];
+  const v = new Set([`${sx},${sy}`]);
+  const p = {};
+  const d = [[1,0],[-1,0],[0,1],[0,-1]];
 
-  const dirs = [[1,0],[-1,0],[0,1],[0,-1]];
-
-  while (queue.length) {
-    const [x, y] = queue.shift();
-
-    if (x === targetX && y === targetY) {
+  while (q.length) {
+    const [x, y] = q.shift();
+    if (x === tx && y === ty) {
       const path = [];
       let cur = `${x},${y}`;
       while (cur) {
         const [cx, cy] = cur.split(",").map(Number);
         path.unshift({ x: cx, y: cy });
-        cur = parent[cur];
+        cur = p[cur];
       }
       return path;
     }
-
-    for (const [dx, dy] of dirs) {
-      const nx = x + dx;
-      const ny = y + dy;
-
+    for (const [dx, dy] of d) {
+      const nx = x + dx, ny = y + dy;
       if (
-        ny >= 0 && ny < map.length &&
-        nx >= 0 && nx < map[0].length &&
-        map[ny][nx] === 0 &&
-        !visited.has(`${nx},${ny}`)
+        map[ny]?.[nx] === 0 &&
+        !v.has(`${nx},${ny}`)
       ) {
-        visited.add(`${nx},${ny}`);
-        parent[`${nx},${ny}`] = `${x},${y}`;
-        queue.push([nx, ny]);
+        v.add(`${nx},${ny}`);
+        p[`${nx},${ny}`] = `${x},${y}`;
+        q.push([nx, ny]);
       }
     }
   }
@@ -181,41 +149,28 @@ function findPath(startX, startY, targetX, targetY) {
 }
 
 /* -------------------------
-   SPIELER BEWEGEN
+   SPIELER
 -------------------------- */
-function movePlayerSmooth(targetX, targetY) {
-  const playerEl = document.querySelector(".player");
-  if (!playerEl) return;
+function movePlayerSmooth(tx, ty) {
+  const el = document.querySelector(".player");
+  const s = getCellPixelCenter(player.x, player.y);
+  const e = getCellPixelCenter(tx, ty);
 
-  const start = getCellPixelCenter(player.x, player.y);
-  const end = getCellPixelCenter(targetX, targetY);
-
-  let progress = 0;
-  const duration = 350;
-  const fps = 60;
-
-  const dx = end.x - start.x;
-  const dy = end.y - start.y;
-
-  const interval = setInterval(() => {
-    progress += 1 / (duration / (1000 / fps));
-
-    if (progress >= 1) {
-      progress = 1;
-      clearInterval(interval);
-      player.x = targetX;
-      player.y = targetY;
+  let t = 0;
+  const i = setInterval(() => {
+    t += 0.08;
+    if (t >= 1) {
+      t = 1;
+      clearInterval(i);
+      player = { x: tx, y: ty };
     }
-
-    playerEl.style.left = start.x + dx * progress + "px";
-    playerEl.style.top = start.y + dy * progress + "px";
-  }, 1000 / fps);
+    el.style.left = s.x + (e.x - s.x) * t - 7 + "px";
+    el.style.top  = s.y + (e.y - s.y) * t - 7 + "px";
+  }, 30);
 }
 
 function followPath(path) {
-  if (!path || path.length < 2) return;
   let i = 1;
-
   function step() {
     if (i >= path.length) return;
     movePlayerSmooth(path[i].x, path[i].y);
@@ -226,47 +181,64 @@ function followPath(path) {
 }
 
 /* -------------------------
-   MAP RENDERN
+   MAP RENDER
 -------------------------- */
 function renderMap() {
   museum.innerHTML = "";
 
-  for (let y = 0; y < map.length; y++) {
-    for (let x = 0; x < map[y].length; x++) {
+  // Zellen
+  map.forEach((row, y) => row.forEach((val, x) => {
+    const cell = document.createElement("div");
+    cell.className = "cell";
 
-      const cell = document.createElement("div");
-      cell.classList.add("cell");
-
-      if (map[y][x] === 1) {
-        const wall = document.createElement("div");
-        wall.classList.add("wall");
-        cell.appendChild(wall);
-      }
-
-      cell.addEventListener("click", () => {
-        if (map[y][x] === 0) {
-          const room = getRoomByCell(x, y);
-
-          roomInfo.innerHTML = room
-            ? `Raum: ${room.name}<br>Info: ${room.info}`
-            : "Raum: Flur<br>Info: –";
-
-          const path = findPath(player.x, player.y, x, y);
-          if (path) followPath(path);
-        }
-      });
-
-      museum.appendChild(cell);
+    if (val === 1) {
+      const w = document.createElement("div");
+      w.className = "wall";
+      cell.appendChild(w);
     }
+
+    cell.onclick = () => {
+      if (val === 0) {
+        const r = getRoomByCell(x, y);
+        roomInfo.innerHTML = r
+          ? `Raum: ${r.name}<br>Info: ${r.info}`
+          : "Raum: Flur<br>Info: –";
+
+        const path = findPath(player.x, player.y, x, y);
+        if (path) followPath(path);
+      }
+    };
+
+    museum.appendChild(cell);
+  }));
+
+  // Spieler
+  const p = document.createElement("div");
+  p.className = "player";
+  museum.appendChild(p);
+  const pos = getCellPixelCenter(player.x, player.y);
+  p.style.left = pos.x - 7 + "px";
+  p.style.top  = pos.y - 7 + "px";
+
+  // 🔹 Raum-Beschriftungen (korrekt IN der Map)
+  for (const key in rooms) {
+    const room = rooms[key];
+    let sx = 0, sy = 0;
+
+    room.cells.forEach(c => {
+      const p = getCellPixelCenter(c[0], c[1]);
+      sx += p.x;
+      sy += p.y;
+    });
+
+    const label = document.createElement("div");
+    label.className = "room-label";
+    label.textContent = room.name;
+    label.style.left = sx / room.cells.length + "px";
+    label.style.top  = sy / room.cells.length + "px";
+
+    museum.appendChild(label);
   }
-
-  const playerEl = document.createElement("div");
-  playerEl.classList.add("player");
-  museum.appendChild(playerEl);
-
-  const startPos = getCellPixelCenter(player.x, player.y);
-  playerEl.style.left = startPos.x + "px";
-  playerEl.style.top = startPos.y + "px";
 }
 
 renderMap();
