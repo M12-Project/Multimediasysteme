@@ -24,8 +24,8 @@ const map = [
 // Startposition
 let player = { x: 5, y: 5 };
 
-const WALL_SIZE = 30;   // Wandbreite
-const ROOM_SIZE = 10;   // Raumgröße
+const WALL_SIZE = 30;
+const ROOM_SIZE = 10;
 
 /* -------------------------
    RÄUME DEFINIEREN
@@ -40,7 +40,6 @@ const rooms = {
       [1,3],[2,3],[3,3],[4,3]
     ]
   },
-
   raum2: {
     name: "Ausstellung A",
     info: "Moderne Kunst und interaktive Exponate.",
@@ -50,7 +49,6 @@ const rooms = {
       [8,3],[9,3],[10,3]
     ]
   },
-
   raum3: {
     name: "Werkstatt",
     info: "Hier entstehen neue Ausstellungsstücke.",
@@ -60,7 +58,6 @@ const rooms = {
       [1,9],[2,9],[3,9]
     ]
   },
-
   raum4: {
     name: "Archiv",
     info: "Zugang nur für Mitarbeitende.",
@@ -77,10 +74,9 @@ const rooms = {
 -------------------------- */
 function getRoomByCell(x, y) {
   for (const key in rooms) {
-    const room = rooms[key];
-    for (const cell of room.cells) {
+    for (const cell of rooms[key].cells) {
       if (cell[0] === x && cell[1] === y) {
-        return room;
+        return rooms[key];
       }
     }
   }
@@ -88,7 +84,7 @@ function getRoomByCell(x, y) {
 }
 
 /* -------------------------
-   GRID DYNAMISCH ERZEUGEN
+   GRID ERZEUGEN
 -------------------------- */
 function generateGridTemplate() {
   const cols = map[0].length;
@@ -120,7 +116,7 @@ function generateGridTemplate() {
 generateGridTemplate();
 
 /* -------------------------
-   ZELL-MITTELPUNKT BERECHNEN
+   ZELL MITTELPUNKT
 -------------------------- */
 function getCellPixelCenter(x, y) {
   const colSizes = museum.style.gridTemplateColumns.split(" ");
@@ -136,13 +132,56 @@ function getCellPixelCenter(x, y) {
   const cellHeight = parseInt(rowSizes[y]);
 
   return {
-    x: px + cellWidth / 2 - 7,  // 7 = halbe Spielergröße
+    x: px + cellWidth / 2 - 7,
     y: py + cellHeight / 2 - 7
   };
 }
 
 /* -------------------------
-   SPIELER SMOOTH BEWEGEN
+   PATHFINDING (BFS)
+-------------------------- */
+function findPath(startX, startY, targetX, targetY) {
+  const queue = [[startX, startY]];
+  const visited = new Set([`${startX},${startY}`]);
+  const parent = {};
+
+  const dirs = [[1,0],[-1,0],[0,1],[0,-1]];
+
+  while (queue.length) {
+    const [x, y] = queue.shift();
+
+    if (x === targetX && y === targetY) {
+      const path = [];
+      let cur = `${x},${y}`;
+      while (cur) {
+        const [cx, cy] = cur.split(",").map(Number);
+        path.unshift({ x: cx, y: cy });
+        cur = parent[cur];
+      }
+      return path;
+    }
+
+    for (const [dx, dy] of dirs) {
+      const nx = x + dx;
+      const ny = y + dy;
+
+      if (
+        ny >= 0 && ny < map.length &&
+        nx >= 0 && nx < map[0].length &&
+        map[ny][nx] === 0 &&
+        !visited.has(`${nx},${ny}`)
+      ) {
+        visited.add(`${nx},${ny}`);
+        parent[`${nx},${ny}`] = `${x},${y}`;
+        queue.push([nx, ny]);
+      }
+    }
+  }
+  return null;
+}
+
+/* -------------------------
+   SPIELER BEWEGEN
 -------------------------- */
 function movePlayerSmooth(targetX, targetY) {
   const playerEl = document.querySelector(".player");
@@ -152,7 +191,7 @@ function movePlayerSmooth(targetX, targetY) {
   const end = getCellPixelCenter(targetX, targetY);
 
   let progress = 0;
-  const duration = 400;
+  const duration = 350;
   const fps = 60;
 
   const dx = end.x - start.x;
@@ -170,18 +209,20 @@ function movePlayerSmooth(targetX, targetY) {
 
     playerEl.style.left = start.x + dx * progress + "px";
     playerEl.style.top = start.y + dy * progress + "px";
-
   }, 1000 / fps);
 }
 
-/* -------------------------
-   SPIELER POSITIONIEREN
--------------------------- */
-function positionPlayer() {
-  const playerEl = document.querySelector(".player");
-  const pos = getCellPixelCenter(player.x, player.y);
-  playerEl.style.left = pos.x + "px";
-  playerEl.style.top = pos.y + "px";
+function followPath(path) {
+  if (!path || path.length < 2) return;
+  let i = 1;
+
+  function step() {
+    if (i >= path.length) return;
+    movePlayerSmooth(path[i].x, path[i].y);
+    i++;
+    setTimeout(step, 380);
+  }
+  step();
 }
 
 /* -------------------------
@@ -202,22 +243,16 @@ function renderMap() {
         cell.appendChild(wall);
       }
 
-      // Klick auf Zelle
       cell.addEventListener("click", () => {
         if (map[y][x] === 0) {
           const room = getRoomByCell(x, y);
 
-          if (room) {
-            roomInfo.innerHTML =
-              "Raum: " + room.name + "<br>" +
-              "Info: " + room.info;
-          } else {
-            roomInfo.innerHTML =
-              "Raum: Flur<br>" +
-              "Info: –";
-          }
+          roomInfo.innerHTML = room
+            ? `Raum: ${room.name}<br>Info: ${room.info}`
+            : "Raum: Flur<br>Info: –";
 
-          movePlayerSmooth(x, y);
+          const path = findPath(player.x, player.y, x, y);
+          if (path) followPath(path);
         }
       });
 
@@ -225,12 +260,13 @@ function renderMap() {
     }
   }
 
-  // Spieler hinzufügen
   const playerEl = document.createElement("div");
   playerEl.classList.add("player");
   museum.appendChild(playerEl);
 
-  positionPlayer();
+  const startPos = getCellPixelCenter(player.x, player.y);
+  playerEl.style.left = startPos.x + "px";
+  playerEl.style.top = startPos.y + "px";
 }
 
 renderMap();
