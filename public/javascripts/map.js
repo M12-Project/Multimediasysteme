@@ -40,6 +40,7 @@ const rooms = {
       [1,3],[2,3],[3,3],[4,3]
     ]
   },
+
   raum2: {
     name: "Ausstellung A",
     info: "Moderne Kunst und interaktive Exponate.",
@@ -49,36 +50,42 @@ const rooms = {
       [8,3],[9,3],[10,3]
     ]
   },
+
   raum3: {
     name: "Werkstatt",
     info: "Hier entstehen neue Ausstellungsstücke.",
     cells: [
-      [1,7],[2,7],[3,7],
-      [1,8],[2,8],[3,8],
-      [1,9],[2,9],[3,9]
+      [1,7],[2,7],[3,7],[4,7],
+      [1,8],[2,8],[3,8],[4,8],
+      [1,9],[2,9],[3,9],[4,9]
     ]
   },
+
   raum4: {
     name: "Archiv",
     info: "Zugang nur für Mitarbeitende.",
     cells: [
-      [7,7],[8,7],[9,7],
-      [7,8],[8,8],[9,8],
-      [7,9],[8,9],[9,9]
+      [6,7],[8,7],[9,7],[10,7],
+      [6,8],[8,8],[9,8],[10,8],
+      [6,9],[8,9],[9,9],[10,9]
     ]
   }
 };
+
+const roomLookup = {};
+
+for (const key in rooms) {
+  for (const [x, y] of rooms[key].cells) {
+    roomLookup[`${x},${y}`] = rooms[key];
+  }
+}
+
 
 /* -------------------------
    HILFSFUNKTIONEN
 -------------------------- */
 function getRoomByCell(x, y) {
-  for (const key in rooms) {
-    for (const c of rooms[key].cells) {
-      if (c[0] === x && c[1] === y) return rooms[key];
-    }
-  }
-  return null;
+  return roomLookup[`${x},${y}`] || null;
 }
 
 function getCellPixelCenter(x, y) {
