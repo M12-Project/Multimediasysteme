@@ -43,6 +43,7 @@ body {
   position: absolute;
   inset: 0;
   background: #000;
+  pointer-events: none;
 }
 
 /* -------------------------
@@ -85,3 +86,6 @@ body {
   z-index: 5;
 }
 
+#speakBtn {
+  display: none;
+}

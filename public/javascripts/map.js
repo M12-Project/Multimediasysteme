@@ -1,5 +1,7 @@
 const museum = document.getElementById("museum");
 const roomInfo = document.getElementById("roomInfo");
+const speakBtn = document.getElementById("speakBtn");
+let currentSpeechText = "";
 
 /*
   1 = Mauer (schwarz)
@@ -65,9 +67,9 @@ const rooms = {
     name: "Archiv",
     info: "Zugang nur für Mitarbeitende.",
     cells: [
-      [6,7],[8,7],[9,7],[10,7],
-      [6,8],[8,8],[9,8],[10,8],
-      [6,9],[8,9],[9,9],[10,9]
+      [6,7],[7,7],[8,7],[9,7],[10,7],
+      [6,8],[7,8],[8,8],[9,8],[10,8],
+      [6,9],[7,9],[8,9],[9,9],[10,9]
     ]
   }
 };
@@ -205,15 +207,30 @@ function renderMap() {
     }
 
     cell.onclick = () => {
-      if (val === 0) {
-        const r = getRoomByCell(x, y);
-        roomInfo.innerHTML = r
-          ? `Raum: ${r.name}<br>Info: ${r.info}`
-          : "Raum: Flur<br>Info: –";
+      if (val !== 0) return;
 
-        const path = findPath(player.x, player.y, x, y);
-        if (path) followPath(path);
+      const r = getRoomByCell(x, y);
+
+      if (r) {
+        roomInfo.innerHTML = `
+          <strong>Raum:</strong> ${r.name}<br>
+          <strong>Info:</strong> ${r.info}
+        `;
+
+        currentSpeechText = `${r.name}. ${r.info}`;
+        speakBtn.style.display = "block";
+      } else {
+        roomInfo.innerHTML = `
+          <strong>Raum:</strong> Flur<br>
+          <strong>Info:</strong> –
+        `;
+
+        currentSpeechText = "";
+        speakBtn.style.display = "none";
       }
+
+      const path = findPath(player.x, player.y, x, y);
+      if (path) followPath(path);
     };
 
     museum.appendChild(cell);
@@ -247,5 +264,18 @@ function renderMap() {
     museum.appendChild(label);
   }
 }
+
+speakBtn.addEventListener("click", () => {
+  if (!currentSpeechText) return;
+
+  window.speechSynthesis.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(currentSpeechText);
+  utterance.lang = "de-DE";
+  utterance.rate = 1;
+  utterance.pitch = 1;
+
+  window.speechSynthesis.speak(utterance);
+});
 
 renderMap();
