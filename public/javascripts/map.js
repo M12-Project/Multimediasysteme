@@ -172,7 +172,9 @@ function movePlayerSmooth(tx, ty) {
       t = 1;
       clearInterval(i);
       player = { x: tx, y: ty };
+      updateRoomByPlayerPosition(); // 🔊 NEU
     }
+
     el.style.left = s.x + (e.x - s.x) * t - 7 + "px";
     el.style.top  = s.y + (e.y - s.y) * t - 7 + "px";
   }, 30);
@@ -277,5 +279,25 @@ speakBtn.addEventListener("click", () => {
 
   window.speechSynthesis.speak(utterance);
 });
+
+function updateRoomByPlayerPosition() {
+  const r = getRoomByCell(player.x, player.y);
+
+  if (r) {
+    roomInfo.innerHTML = `
+      <strong>Raum:</strong> ${r.name}<br>
+      <strong>Info:</strong> ${r.info}
+    `;
+    currentSpeechText = `${r.name}. ${r.info}`;
+    speakBtn.style.display = "block";
+  } else {
+    roomInfo.innerHTML = `
+      <strong>Raum:</strong> Flur<br>
+      <strong>Info:</strong> –
+    `;
+    currentSpeechText = "";
+    speakBtn.style.display = "none";
+  }
+}
 
 renderMap();
