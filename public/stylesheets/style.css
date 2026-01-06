@@ -3,32 +3,54 @@
 -------------------------- */
 
 body {
-  background: #f5f5f5;
+  --bg: #f5f7fb;
+  --card: #ffffff;
+  --muted: #6b7280;
+  --accent: #0d6efd;
+  --danger: #d9534f;
+
+  background: var(--bg);
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
 }
 
 .app-container {
   max-width: 420px;
+  margin: 0 auto;
+  padding: 12px;
 }
 
 /* Titel */
 .app-title {
-  font-size: 1.6rem;
-  font-weight: 600;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
 }
 
 /* -------------------------
    MUSEUM MAP
 -------------------------- */
 
+.map-wrapper {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 6px 0 0 0;
+}
+
 #museum {
   display: grid;
-  width: fit-content;
-  background: #fff;
-  border: 1px solid #ccc;
+  background: var(--card);
+  border: 1px solid rgba(15,23,42,0.06);
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(15,23,42,0.06);
   touch-action: manipulation;
-
-  /* 🔴 WICHTIG: Bezugspunkt für .player */
   position: relative;
+  margin: 0 auto;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* Zelle */
@@ -40,9 +62,10 @@ body {
 
 /* Wand */
 .wall {
+  /* full-cell fill like before */
   position: absolute;
   inset: 0;
-  background: #000;
+  background: #111;
   pointer-events: none;
 }
 
@@ -51,13 +74,15 @@ body {
 -------------------------- */
 
 .player {
+  background: var(--danger);
   width: 14px;
   height: 14px;
-  background: red;
   border-radius: 50%;
   position: absolute;
-  z-index: 10;
+  z-index: 30;
   pointer-events: none;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+  transition: transform 120ms linear;
 }
 
 /* -------------------------
@@ -65,19 +90,19 @@ body {
 -------------------------- */
 
 .info-card {
-  background: white;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-  font-size: 0.95rem;
+  background: var(--card);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 8px 20px rgba(2,6,23,0.06);
+  font-size: 1rem;
 }
 
 .room-label {
   position: absolute;
   transform: translate(-50%, -50%);
-  font-size: 11px;
-  font-weight: 600;
-  color: #444;
+  font-size: 12px;
+  font-weight: 700;
+  color: #0f172a;
   text-align: center;
   max-width: 80px;
   line-height: 1.1;
@@ -88,4 +113,35 @@ body {
 
 #speakBtn {
   display: none;
+}
+
+/* Buttons (mobile-friendly) */
+.btn-mobile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 14px;
+  font-size: 0.98rem;
+  border-radius: 10px;
+}
+
+.legend {
+  display:flex;
+  gap:10px;
+  align-items:center;
+  justify-content:center;
+  margin-top:10px;
+  color:var(--muted);
+  font-size:0.95rem;
+}
+.legend .key {
+  display:inline-flex;align-items:center;gap:8px;background:rgba(15,23,42,0.02);padding:6px 8px;border-radius:8px;
+}
+
+@media (max-width: 480px) {
+  .app-title { font-size: 1.25rem; }
+  .info-card { padding: 12px; font-size: 0.98rem; }
+  .room-label { font-size: 13px; max-width: 110px; }
+  .btn-mobile { padding: 12px; font-size: 1rem; }
 }

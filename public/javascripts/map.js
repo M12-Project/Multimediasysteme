@@ -26,7 +26,7 @@ const map = [
 // Startposition
 let player = { x: 5, y: 5 };
 
-const WALL_SIZE = 30;
+const WALL_SIZE = 28;
 const ROOM_SIZE = 10;
 
 /* -------------------------
