@@ -34,8 +34,8 @@ const ROOM_SIZE = 10;
 -------------------------- */
 const rooms = {
   raum1: {
-    name: "Eingangshalle",
-    info: "Willkommen im Museum. Von hier aus erreichen Sie alle Ausstellungen.",
+    name: "Einleitung",
+    info: "Museen stehen im digitalen Wandel und konkurrieren zunehmend mit digitalen Freizeitangeboten wie Streaming oder Games.<br><br>Interaktive Technologien bieten neue Möglichkeiten, Aufmerksamkeit zu erzeugen und Besucher aktiv einzubinden.<br><br>Diese Arbeit untersucht, welche digitalen Technologien besonders geeignet sind, das Besucherinteresse zu steigern und die Verweildauer im Museum zu verlängern.<br><br><strong>Fragestellung:</strong> Welche interaktiven Technologien sind im Museumskontext am effektivsten, um das Interesse und die Verweildauer von Besuchern zu steigern?",
     cells: [
       [1,1],[2,1],[3,1],[4,1],
       [1,2],[2,2],[3,2],[4,2],
@@ -44,8 +44,8 @@ const rooms = {
   },
 
   raum2: {
-    name: "Ausstellung A",
-    info: "Moderne Kunst und interaktive Exponate.",
+    name: "Theoretische Grundlagen",
+    info: " Interaktive Technologien im Museum beziehen Besucher aktiv in das Ausstellungsgeschehen ein. Dazu zählen unter anderem Audio-Guides, Touchscreens sowie immersive Technologien wie Virtual und Augmented Reality. Zentrale Kriterien zur Bewertung des Benutzererlebnisses sind das Besucherinteresse sowie die Verweildauer, die als Indikatoren für Aufmerksamkeit, Engagement und inhaltliche Auseinandersetzung gelten.",
     cells: [
       [8,1],[9,1],[10,1],
       [8,2],[9,2],[10,2],
@@ -54,8 +54,8 @@ const rooms = {
   },
 
   raum3: {
-    name: "Werkstatt",
-    info: "Hier entstehen neue Ausstellungsstücke.",
+    name: "Vergleich interaktiver Technologien",
+    info: "Aktuelle Studien zeigen deutliche Unterschiede zwischen VR/AR-Technologien und Audio-Guides. Immersive VR- und AR-Anwendungen erzeugen starke emotionale Beteiligung und hohe Aufmerksamkeit, was zu intensivem situativem Interesse und längerer Verweildauer führt. Audio-Guides unterstützen vor allem eine strukturierte, narrative und selbstgesteuerte Informationsaufnahme und fördern eine bewusste Auseinandersetzung mit den Inhalten.",
     cells: [
       [1,7],[2,7],[3,7],[4,7],
       [1,8],[2,8],[3,8],[4,8],
@@ -64,8 +64,8 @@ const rooms = {
   },
 
   raum4: {
-    name: "Archiv",
-    info: "Zugang nur für Mitarbeitende.",
+    name: "Fazit",
+    info: "Die Ergebnisse zeigen, dass sowohl VR/AR-Technologien als auch Audio-Guides das Besucherinteresse und die Verweildauer positiv beeinflussen, jedoch auf unterschiedliche Weise. VR und AR eignen sich besonders für immersive, emotionale Erlebnisse, während Audio-Guides durch Zugänglichkeit, Orientierung und inhaltliche Tiefe überzeugen. Die Wirksamkeit interaktiver Technologien hängt stark vom Ausstellungskonzept ab, weshalb eine gezielte Kombination beider Ansätze sinnvoll ist.",
     cells: [
       [6,7],[7,7],[8,7],[9,7],[10,7],
       [6,8],[7,8],[8,8],[9,8],[10,8],
