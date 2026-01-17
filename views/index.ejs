@@ -6,43 +6,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Bootstrap -->
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-  >
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <link rel="stylesheet" href="/stylesheets/style.css">
 </head>
-<body class="bg-light">
+
+<body>
 
 <div class="container app-container">
 
   <!-- Header -->
   <header class="text-center my-3">
     <h1 class="app-title">🏛️ Museum Navigator</h1>
+    <p class="subtitle">Tippe auf einen Raum, um zu navigieren</p>
   </header>
 
-  <!-- Map -->
-  <div class="info-card mt-3">
+  <!-- Map Card -->
+  <div class="card card-soft">
     <div class="map-wrapper">
       <div id="museum" aria-label="Museum map"></div>
     </div>
+
     <div class="legend">
-      <div class="key"><span style="display:inline-block;width:12px;height:12px;background:#111;border-radius:2px"></span> Wand</div>
-      <div class="key"><span style="display:inline-block;width:12px;height:12px;background:#d9534f;border-radius:50%"></span> Ich </div>
-      <div class="key">Tippe auf einen Raum, um zu navigieren</div>
+      <span class="legend-item">
+        <span class="legend-wall"></span> Wand
+      </span>
+      <span class="legend-item">
+        <span class="legend-player"></span> Ich
+      </span>
     </div>
   </div>
 
-  <!-- Info -->
-  <div class="info-card mt-3">
-    <div id="roomInfo">
-      <strong>Raum:</strong> –<br>
-      <strong>Info:</strong> –
-    </div>
+  <!-- Info Card -->
+  <div class="card card-soft mt-3">
+    <h6 class="info-title">📍 Aktueller Raum</h6>
+    <div id="roomName" class="info-value">–</div>
 
-    <button id="speakBtn"
-      class="btn btn-sm btn-outline-primary mt-2 w-100">
+    <hr>
+
+    <h6 class="info-title">ℹ️ Beschreibung</h6>
+    <div id="roomInfo" class="info-muted">–</div>
+
+    <button id="speakBtn" class="btn btn-outline-primary btn-mobile mt-3 w-100">
       🔊 Info vorlesen
     </button>
   </div>

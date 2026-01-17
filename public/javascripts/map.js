@@ -26,8 +26,8 @@ const map = [
 // Startposition
 let player = { x: 5, y: 5 };
 
-const WALL_SIZE = 28;
-const ROOM_SIZE = 10;
+const WALL_SIZE = 27;
+const ROOM_SIZE = 27;
 
 /* -------------------------
    RÄUME
@@ -86,8 +86,16 @@ for (const key in rooms) {
 /* -------------------------
    HILFSFUNKTIONEN
 -------------------------- */
-function getRoomByCell(x, y) {
-  return roomLookup[`${x},${y}`] || null;
+function getRoomClassByCell(x, y) {
+  const r = getRoomByCell(x, y);
+  if (!r) return null;
+
+  if (r.name === "Einleitung") return "room-einleitung";
+  if (r.name === "Theoretische Grundlagen") return "room-grundlagen";
+  if (r.name === "Vergleich interaktiver Technologien") return "room-vergleich";
+  if (r.name === "Fazit") return "room-fazit";
+
+  return null;
 }
 
 function getCellPixelCenter(x, y) {
@@ -191,6 +199,10 @@ function followPath(path) {
   step();
 }
 
+function getRoomByCell(x, y) {
+  return roomLookup[`${x},${y}`] || null;
+}
+
 /* -------------------------
    MAP RENDER
 -------------------------- */
@@ -201,6 +213,12 @@ function renderMap() {
   map.forEach((row, y) => row.forEach((val, x) => {
     const cell = document.createElement("div");
     cell.className = "cell";
+
+    const roomClass = getRoomClassByCell(x, y);
+    if (roomClass) {
+      cell.classList.add("room", roomClass);
+    }
+
 
     if (val === 1) {
       const w = document.createElement("div");
