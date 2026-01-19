@@ -78,6 +78,12 @@ const rooms = {
   }
 };
 
+function stripHTML(html) {
+  const tmp = document.createElement("div");
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || "";
+}
+
 const roomLookup = {};
 
 for (const key in rooms) {
@@ -241,7 +247,7 @@ function renderMap() {
         <strong>Info:</strong> ${r.info}
       `;
 
-      currentSpeechText = `${r.name}. ${r.info}`;
+      currentSpeechText = `${r.name}. ${stripHTML(r.info)}`;
       audioControls.style.display = "block"; // 🔊 HIER
     }
 
@@ -291,7 +297,7 @@ function updateRoomByPlayerPosition() {
       <strong>Info:</strong> ${r.info}
     `;
 
-    currentSpeechText = `${r.name}. ${r.info}`;
+    currentSpeechText = `${r.name}. ${stripHTML(r.info)}`;
     audioControls.style.display = "block"; // 🔊 HIER
   }
 }
