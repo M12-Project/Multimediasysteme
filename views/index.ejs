@@ -47,11 +47,16 @@
     <h6 class="info-title">ℹ️ Beschreibung</h6>
     <div id="roomInfo" class="info-muted">–</div>
 
-    <button id="speakBtn" class="btn btn-outline-primary btn-mobile mt-3 w-100">
-      🔊 Info vorlesen
-    </button>
-  </div>
+    <div class="audio-controls mt-3" id="audioControls" style="display:none;">
+      <button class="btn btn-outline-primary btn-sm" id="speakBtn">
+        ▶️ Abspielen
+      </button>
 
+      <button class="btn btn-outline-secondary btn-sm" id="pauseBtn">
+        ⏸ Pause
+      </button>
+    </div>
+  </div>
 </div>
 
 <script src="/javascripts/map.js"></script>
