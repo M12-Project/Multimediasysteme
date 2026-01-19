@@ -1,5 +1,6 @@
 const museum = document.getElementById("museum");
 const roomInfo = document.getElementById("roomInfo");
+const roomName = document.getElementById("roomName");
 const audioControls = document.getElementById("audioControls");
 
 let currentSpeechText = "";
@@ -241,16 +242,8 @@ function renderMap() {
 
       const r = getRoomByCell(x, y);
 
-      if (r) {
-        roomInfo.innerHTML = `
-        <strong>Raum:</strong> ${r.name}<br>
-        <strong>Info:</strong> ${r.info}
-      `;
-
       currentSpeechText = `${r.name}. ${stripHTML(r.info)}`;
       audioControls.style.display = "block"; // 🔊 HIER
-    }
-
 
       const path = findPath(player.x, player.y, x, y);
       if (path) followPath(path);
@@ -292,57 +285,61 @@ function updateRoomByPlayerPosition() {
   const r = getRoomByCell(player.x, player.y);
 
   if (r) {
-    roomInfo.innerHTML = `
-      <strong>Raum:</strong> ${r.name}<br>
-      <strong>Info:</strong> ${r.info}
-    `;
+    roomName.textContent = r.name;          // 📍 Aktueller Raum
+    roomInfo.innerHTML = r.info;            // ℹ️ Beschreibung
 
     currentSpeechText = `${r.name}. ${stripHTML(r.info)}`;
-    audioControls.style.display = "block"; // 🔊 HIER
+    audioControls.style.display = "block";
+  } else {
+    roomName.textContent = "Flur";
+    roomInfo.textContent = "–";
+    audioControls.style.display = "none";
+    currentSpeechText = "";
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  speakBtn = document.getElementById("speakBtn");
+  document.addEventListener("DOMContentLoaded", () => {
+    speakBtn = document.getElementById("speakBtn");
 
-  if (!speakBtn) {
-    console.warn("speakBtn nicht gefunden");
-    return;
-  }
+    if (!speakBtn) {
+      console.warn("speakBtn nicht gefunden");
+      return;
+    }
 
-  speakBtn.addEventListener("click", () => {
+    speakBtn.addEventListener("click", () => {
     if (!currentSpeechText) return;
 
-    // Wenn pausiert → einfach fortsetzen
+    // Wenn pausiert → fortsetzen
     if (isPaused && window.speechSynthesis.paused) {
       window.speechSynthesis.resume();
       isPaused = false;
       return;
     }
 
-    // Wenn bereits gesprochen wird → nichts tun
-    if (window.speechSynthesis.speaking) return;
+    // Alles andere stoppen (sehr wichtig!)
+    window.speechSynthesis.cancel();
 
-      // Neu starten
-      utterance = new SpeechSynthesisUtterance(currentSpeechText);
-      utterance.lang = "de-DE";
-      utterance.rate = 1;
-      utterance.pitch = 1;
+    utterance = new SpeechSynthesisUtterance(currentSpeechText);
+    utterance.lang = "de-DE";
+    utterance.rate = 1;
+    utterance.pitch = 1;
 
-      utterance.onend = () => {
-        utterance = null;
-        isPaused = false;
+    utterance.onend = () => {
+      utterance = null;
+      isPaused = false;
     };
 
     window.speechSynthesis.speak(utterance);
   });
 
+
   document.getElementById("pauseBtn").addEventListener("click", () => {
-    if (window.speechSynthesis.speaking && !isPaused) {
-      window.speechSynthesis.pause();
-      isPaused = true;
-    }
-  });
+  if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+    window.speechSynthesis.pause();
+    isPaused = true;
+  }
+});
+
 });
 
 renderMap();
