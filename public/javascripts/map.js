@@ -191,7 +191,7 @@ function movePlayerSmooth(tx, ty) {
       t = 1;
       clearInterval(i);
       player = { x: tx, y: ty };
-      updateRoomByPlayerPosition(); // 🔊 NEU
+      updateRoomByPlayerPosition(); 
     }
 
     el.style.left = s.x + (e.x - s.x) * t - 7 + "px";
